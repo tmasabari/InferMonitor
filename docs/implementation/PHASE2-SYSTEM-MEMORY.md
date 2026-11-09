@@ -3,7 +3,7 @@
 ## Delivered scope
 - Static Linux inventory: distribution, kernel, architecture, CPU model/topology, NUMA nodes, motherboard/BIOS where exposed by sysfs DMI, block devices, mounted filesystems, network interface state/speed, uptime.
 - Host RAM breakdown from /proc/meminfo: total/free/available, buffers, page cache, active/inactive anonymous and file-backed memory, shared memory, slab, kernel stacks, page tables, dirty/writeback, swap and huge-page counters when present.
-- Host process memory: top 20 processes by RSS, RSS anonymous/file/shared breakdown, swap, and PSS/private/shared from smaps_rollup for the top 12. Process scans are cached for five seconds to limit overhead.
+- Host process memory: top 20 processes by RSS, the exact command line (`/proc/<pid>/cmdline`), RSS anonymous/file/shared breakdown, swap, and PSS/private/shared from smaps_rollup for the top 12. Process scans are cached for five seconds to limit overhead.
 - GPU process attribution: best-effort amd-smi process --json parser for per-process VRAM/GTT. It preserves unavailable values and does not assume that process totals equal device-wide allocation.
 - Static inventory refreshes every 30 seconds; telemetry remains sampled with the existing collector.
 

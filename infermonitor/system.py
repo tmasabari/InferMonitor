@@ -137,7 +137,12 @@ class LinuxMemoryProvider:
                     value = status.get(key, "0").split()[0]
                     return int(value) * 1024
                 pid = int(p.name)
+                try:
+                    cmd = (p / "cmdline").read_bytes().replace(b"\x00", b" ").decode("utf-8", "replace").strip()
+                except OSError:
+                    cmd = ""
                 row = {"pid": pid, "name": status.get("Name", "unknown"),
+                       "cmdline": cmd or None,
                        "rss_bytes": kb("VmRSS"), "rss_anon_bytes": kb("RssAnon"),
                        "rss_file_bytes": kb("RssFile"), "rss_shmem_bytes": kb("RssShmem"),
                        "swap_bytes": kb("VmSwap"), "pss_bytes": None,
@@ -194,7 +199,7 @@ class LinuxMemoryProvider:
         return {"state": "ACTIVE" if memory else "DEGRADED", "unit": "bytes",
                 "fields": memory, "processes": self.cached or [],
                 "processes_limit": self.process_limit,
-                "processes_semantics": "Top processes by VmRSS; PSS/private/shared read from smaps_rollup for the top subset. Permission or process-exit races can leave fields unavailable."}
+                "processes_semantics": "Top processes by VmRSS; cmdline is the exact command line from /proc/<pid>/cmdline (empty for kernel threads); PSS/private/shared read from smaps_rollup for the top subset. Permission or process-exit races can leave fields unavailable."}
 
 class AmdRocmProcessProvider:
     """Best-effort per-process GPU memory attribution via AMD SMI process JSON."""

@@ -34,5 +34,7 @@ Conceptual contract; implementation details may vary.
 
 **llama.cpp:** use metrics exposition when enabled; optional metadata endpoints only when available. Confirm names/labels against tested builds.
 
+**EXL3 RDNA4 (TabbyAPI + ExLlamaV3):** the recipe (parth-thakre/exl3-rdna4-recipe) serves an OpenAI-compatible TabbyAPI. Fingerprint via the TabbyAPI health shape (`{"status": ..., "issues": [...]}`) with the ReDoc page title as fallback; identify must not require an API key. Collect engine health only (`exl3rdna4.healthy`, `exl3rdna4.health_issues_total`); `/v1/models` may require an API key, so only its probe state/status is recorded in diagnostics — never store keys. Confirm names against the running TabbyAPI build.
+
 ## Compatibility
 Record observed engine version if available. Unknown future fields should not break parsing. Missing required fingerprint evidence downgrades detection rather than inviting a guess.

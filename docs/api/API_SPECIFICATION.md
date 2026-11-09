@@ -13,10 +13,13 @@ Serve the latest cached collector snapshot. Browser/API reads must not trigger f
 | GET | /api/endpoints | Configured targets and detection state |
 | GET | /api/snapshot | Latest host sample and endpoint observations |
 | GET | /api/history?from=&to=&endpoint_id=&session_id=&limit= | Bounded historical query |
-| GET | /api/config | Safe effective configuration with secrets redacted |
+| GET | /api/config | Safe effective configuration with secrets redacted (includes `config_error` when a config write failed) |
 | GET | / | Static dashboard |
+| POST | /api/endports | Start tracking a loopback local port; body `{"port":1-65535}` → 201 `{"endpoint":…}` |
+| PATCH | /api/endpoints/{id} | Pause/resume; body `{"enabled":true\|false}` → 200 `{"endpoint":…}` |
+| DELETE | /api/endpoints/{id} | Stop tracking and remove from config → 200 `{"ok":true}` |
 
-Configuration mutation is not part of MVP.
+Configuration mutation is limited to endpoint tracking (loopback ports only) and is persisted to the config file, re-validated on next start.
 
 ## Example health
 ```json
@@ -30,8 +33,9 @@ Configuration mutation is not part of MVP.
 
 ## Semantics
 - HTTP 200 may include endpoint state unavailable; the API request itself succeeded.
-- HTTP 400 invalid query/config input.
+- HTTP 400 invalid query/config input (or `ENDPOINT_LIMIT` when more than three endpoints would be enabled).
 - HTTP 404 unknown resource.
+- HTTP 409 `CONFLICT` for a duplicate endpoint/port.
 - HTTP 500 unexpected companion failure.
 - Missing metrics are null with availability reason.
 

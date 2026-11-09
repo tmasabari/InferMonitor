@@ -39,10 +39,36 @@ class Adapter:
    ok=isinstance(d,dict) and (version is not None or any(k in d for k in ("hardware_static","requests","max_context","expert_cache_mib")))
    ok=ok or (isinstance(h,dict) and ("max_context" in h or ("loaded" in h and "model" in h)))
    return ok,{"metrics_status":status,"health_status":hstatus,"engine_version":version,"signature":"PolyStrata JSON metrics/health" if ok else None}
+  if self.engine=="exl3rdna4":
+   hs,hb,hstatus=http(base+"/health")
+   try:d=json.loads(hb) if hb else {}
+   except ValueError:d={}
+   ok=isinstance(d,dict) and isinstance(d.get("issues"),list) and d.get("status") is not None
+   ev={"health_status":hstatus,"signature":None}
+   if not ok:
+    rs,rb,rstatus=http(base+"/redoc")
+    ev["redoc_status"]=rstatus
+    if rs=="ok" and "TabbyAPI" in (rb or ""):ok=True
+   if ok:ev["signature"]="TabbyAPI health/redoc fingerprint (EXL3 RDNA4 recipe)"
+   return ok,ev
   state,body,status=http(base+"/metrics")
   if state=="ok" and ("llamacpp:" in body or ("# TYPE" in body and "llama_" in body)):return True,{"metrics_status":status,"signature":"llama.cpp Prometheus exposition"}
   return False,{"metrics_status":status}
  def collect(self,base,http):
+  if self.engine=="exl3rdna4":
+   result={"metrics":[],"diagnostics":{}}
+   hs,hb,hstatus=http(base+"/health")
+   result["diagnostics"]["/health"]={"state":hs,"status":hstatus}
+   d=None
+   if hs=="ok" and hb:
+    try:d=json.loads(hb)
+    except ValueError:d=None
+   if isinstance(d,dict):
+    result["metrics"].append({"name":"exl3rdna4.healthy","value":1.0 if d.get("status")=="healthy" else 0.0,"unit":None,"scope":"engine","source":"exl3rdna4.health","availability":"available","semantics":"1 when /health reports status healthy, 0 otherwise"})
+    result["metrics"].append({"name":"exl3rdna4.health_issues_total","value":float(len(d.get("issues"))) if isinstance(d.get("issues"),list) else 0.0,"unit":None,"scope":"engine","source":"exl3rdna4.health","availability":"available","semantics":"number of entries in the /health issues list"})
+   ms,mb,mstatus=http(base+"/v1/models")
+   result["diagnostics"]["/v1/models"]={"state":ms,"status":mstatus}
+   return result
   if self.engine=="llamacpp":
    state,body,status=http(base+"/metrics")
    return {"metrics":parse_prom(body or "","llamacpp.prometheus") if state=="ok" else [],"diagnostics":{"/metrics":{"state":state,"status":status}}}

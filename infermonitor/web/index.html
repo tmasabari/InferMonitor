@@ -1,19 +1,34 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>InferMonitor</title><style>
-:root{color-scheme:dark;background:#0b1020;color:#eaf0ff;font:14px system-ui}body{margin:0}header{padding:20px 4vw;border-bottom:1px solid #26334d;display:flex;justify-content:space-between;gap:12px}main{max-width:1600px;margin:auto;padding:20px 4vw}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.card{background:#141c30;border:1px solid #26334d;border-radius:12px;padding:15px;margin-bottom:13px;min-width:0}h1{font-size:22px;margin:0}h2{font-size:16px;margin:0 0 12px}.muted{color:#91a0b9}.good{color:#55d6a2}.warn{color:#ffc66d}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.metric{background:#0e1628;border-radius:8px;padding:10px;min-width:0}.value{font-size:18px;font-weight:650;overflow-wrap:anywhere}.label{font-size:12px;color:#91a0b9}.bar{height:9px;background:#26334d;border-radius:9px;overflow:hidden;margin:6px 0 10px}.bar>i{display:block;height:100%;background:#64a6ff}.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;white-space:nowrap}td,th{text-align:left;padding:7px;border-bottom:1px solid #26334d;font-size:12px}details{margin-top:10px}pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#aab8d0;font-size:11px}.tag{font-size:11px;padding:3px 7px;border-radius:5px;background:#25314a}.section{margin:18px 0 9px}
+:root{color-scheme:dark;background:#0b1020;color:#eaf0ff;font:14px system-ui}body{margin:0}header{padding:16px 4vw;border-bottom:1px solid #26334d;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}main{max-width:1600px;margin:auto;padding:20px 4vw}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.card{background:#141c30;border:1px solid #26334d;border-radius:12px;padding:15px;margin-bottom:13px;min-width:0}h1{font-size:22px;margin:0}h2{font-size:16px;margin:0 0 12px}
+details.sec{margin:10px 0 14px}details.sec>summary{cursor:pointer;font-size:16px;font-weight:650;margin:10px 0;padding:9px 2px;border-bottom:1px solid #26334d}details.sec>summary::-webkit-details-marker{color:#64a6ff}
+.muted{color:#91a0b9}.good{color:#55d6a2}.warn{color:#ffc66d}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}.metric{background:#0e1628;border-radius:8px;padding:10px;min-width:0}.value{font-size:18px;font-weight:650;overflow-wrap:anywhere}.label{font-size:12px;color:#91a0b9}.bar{height:9px;background:#26334d;border-radius:9px;overflow:hidden;margin:6px 0 10px}.bar>i{display:block;height:100%;background:#64a6ff}.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto;white-space:nowrap}td,th{text-align:left;padding:7px;border-bottom:1px solid #26334d;font-size:12px}td.cmd{max-width:560px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;color:#aab8d0}details{margin-top:10px}pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#aab8d0;font-size:11px}.tag{font-size:11px;padding:3px 7px;border-radius:5px;background:#25314a}
+.btn{font:inherit;font-size:12px;padding:4px 12px;border-radius:8px;border:1px solid #2c3a57;background:#1b2540;color:#eaf0ff;cursor:pointer}.btn:hover{border-color:#3a4d75;background:#223052}.btn.danger{color:#ff9b9b;border-color:#5a3540;background:transparent}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}input[type=number]{width:130px;background:#0e1628;border:1px solid #26334d;color:#eaf0ff;border-radius:8px;padding:6px 10px;font:inherit}.hdr{display:flex;gap:8px;align-items:center}
 </style></head><body>
-<header><div><h1>InferMonitor</h1><div class="muted">Ubuntu · PolyStrata · llama.cpp · AMD ROCm</div></div><div id="updated" class="muted">Connecting…</div></header><main>
-<h2 class="section">System inventory</h2><section id="system" class="grid"></section>
-<h2 class="section">Host RAM accounting</h2><section class="card"><div id="ram-summary" class="metrics"></div><div id="ram-breakdown" class="split" style="margin-top:12px"></div><details><summary>RAM accounting semantics</summary><p class="muted">MemAvailable is the kernel estimate of memory available without swapping. Memory categories such as Cached, Active, Anonymous and Slab overlap; do not sum them as exclusive buckets. Used estimate = MemTotal − MemAvailable.</p></details></section>
-<section class="card"><h2>Top processes by resident memory</h2><div id="ram-processes"></div><div id="ram-note" class="muted"></div></section>
-<h2 class="section">GPU devices and VRAM</h2><section id="gpu" class="grid"></section>
-<section class="card"><h2>GPU process memory attribution</h2><div id="gpu-processes"></div><div id="gpu-note" class="muted"></div></section>
-<h2 class="section">Inference endpoints</h2><section id="eps" class="grid"></section>
-<section class="card"><h2>Plugin status</h2><div id="plugins" class="muted">—</div></section>
-<section class="card"><h2>Recent history</h2><div id="history"></div></section></main>
+<header><div><h1>InferMonitor</h1><div class="muted">Ubuntu · PolyStrata · llama.cpp · AMD ROCm</div></div><div class="hdr"><button class="btn" id="xall">Expand all</button><button class="btn" id="call">Collapse all</button><div id="updated" class="muted">Connecting…</div></div></header><main>
+<details class="sec" id="sec-system" open><summary>System inventory</summary><section id="system" class="grid"></section></details>
+<details class="sec" id="sec-ram" open><summary>Host RAM accounting</summary>
+<section class="card"><div id="ram-summary" class="metrics"></div><div id="ram-breakdown" class="split" style="margin-top:12px"></div><details><summary>RAM accounting semantics</summary><p class="muted">MemAvailable is the kernel estimate of memory available without swapping. Memory categories such as Cached, Active, Anonymous and Slab overlap; do not sum them as exclusive buckets. Used estimate = MemTotal − MemAvailable.</p></details></section>
+<details class="sec" id="sec-ram-top" open><summary>Top processes by resident memory</summary><section class="card"><div id="ram-processes"></div><div id="ram-note" class="muted"></div></section></details></details>
+<details class="sec" id="sec-gpu" open><summary>GPU devices and VRAM</summary>
+<section id="gpu" class="grid"></section>
+<section class="card"><h2>GPU process memory attribution</h2><div id="gpu-processes"></div><div id="gpu-note" class="muted"></div></section></details>
+<details class="sec" id="sec-endpoints" open><summary>Inference endpoints</summary>
+<form id="track" class="card"><h2>Track a local port</h2>
+<div class="row"><label for="port" class="muted">Local port</label><input id="port" name="port" type="number" min="1" max="65535" step="1" placeholder="e.g. 8080" required><button class="btn" type="submit">Track</button><span id="track-msg" class="muted"></span></div>
+<p class="muted" style="margin:8px 0 0">Starts tracking <code>http://127.0.0.1:&lt;port&gt;</code> at once — engine is auto-detected and the port is saved to the config file.</p></form>
+<section id="eps" class="grid"></section></details>
+<details class="sec" id="sec-plugins" open><summary>Plugin status</summary><section class="card"><h2>Plugin status</h2><div id="plugins" class="muted">—</div></section></details>
+<details class="sec" id="sec-history" open><summary>Recent history</summary><section class="card"><h2>Recent history</h2><div id="history"></div></section></details></main>
 <script>
-const $=id=>document.getElementById(id),fmt=(v,u='')=>v==null?'N/A':(typeof v==='number'?new Intl.NumberFormat(undefined,{maximumFractionDigits:1}).format(v):v)+(u?' '+u:''),gib=v=>v==null?null:v/1073741824;
+const $=id=>document.getElementById(id),fmt=(v,u='')=>v==null?'N/A':(typeof v==='number'?new Intl.NumberFormat(undefined,{maximumFractionDigits:1}).format(v):v)+(u?' '+u:''),gib=v=>v==null?null:v/1073741824,esc=x=>String(x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SEC_KEY='infermonitor.sections.v1',secs=[...document.querySelectorAll('details.sec')];
+function saveSecs(){try{localStorage.setItem(SEC_KEY,JSON.stringify(Object.fromEntries(secs.map(d=>[d.id,d.open]))))}catch(_){}}
+function setSecs(open){secs.forEach(d=>d.open=open);saveSecs()}
+(function loadSecs(){try{const s=JSON.parse(localStorage.getItem(SEC_KEY)||'{}');secs.forEach(d=>{if(s[d.id]!==undefined)d.open=s[d.id]})}catch(_){}})();
+addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('sec'))saveSecs()},true);
+$('xall').onclick=()=>setSecs(true);$('call').onclick=()=>setSecs(false);
 function panel(title,items){return '<article class="card"><h2>'+title+'</h2><div class="metrics">'+items.map(x=>'<div class="metric"><div class="value">'+fmt(x[1],x[2])+'</div><div class="label">'+x[0]+'</div></div>').join('')+'</div></article>'}
-function table(headers,rows){return '<table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(x=>'<td>'+fmt(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
+function table(headers,rows,cls){return '<table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((x,i)=>'<td'+(cls&&cls.includes(i)?' class="cmd"':'')+'>'+esc(fmt(x))+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
 function renderSystem(s){if(!s)return;$('system').innerHTML=[
 panel('Operating system',[['Distribution',s.os?.name],['Kernel',s.os?.kernel],['Architecture',s.os?.architecture],['Hostname',s.host?.hostname],['Uptime hours',s.host?.uptime_seconds==null?null:s.host.uptime_seconds/3600,'h']]),
 panel('CPU',[['Processor',s.cpu?.model],['Vendor',s.cpu?.vendor],['Physical cores',s.cpu?.physical_cores],['Logical processors',s.cpu?.logical_processors],['Online CPUs',s.cpu?.online_cpus],['NUMA nodes',(s.cpu?.numa_nodes||[]).join(', ')||'N/A']]),
@@ -24,12 +39,57 @@ function renderMemory(m){let f=m?.fields||{},total=f.total||0,used=f.used_estima
 $('ram-summary').innerHTML=[['Installed/usable RAM',gib(total),'GiB'],['Available',gib(available),'GiB'],['Used estimate',gib(used),'GiB'],['Free pages',gib(f.free),'GiB'],['Swap used',gib(f.swap_used),'GiB'],['Swap total',gib(f.swap_total),'GiB']].map(x=>'<div class="metric"><div class="value">'+fmt(x[1],x[2])+'</div><div class="label">'+x[0]+'</div></div>').join('');
 let groups=[['Page cache / buffers',[['Cached',f.cached],['Buffers',f.buffers],['Swap cached',f.swap_cached]]],['Anonymous / shared',[['Anonymous pages',f.anonymous],['Shared memory',f.shared_memory],['Mapped',f.mapped]]],['Active / inactive',[['Active anon',f.active_anon],['Inactive anon',f.inactive_anon],['Active file',f.active_file],['Inactive file',f.inactive_file]]],['Kernel / reclaimable',[['Slab',f.slab],['Reclaimable slab',f.slab_reclaimable],['Unreclaimable slab',f.slab_unreclaimable],['Kernel stack',f.kernel_stack],['Page tables',f.page_tables]]],['I/O and commitment',[['Dirty',f.dirty],['Writeback',f.writeback],['Committed',f.committed],['Commit limit',f.commit_limit]]]];
 $('ram-breakdown').innerHTML=groups.map(g=>'<article class="card"><h2>'+g[0]+'</h2>'+g[1].map(x=>'<div class="metric" style="margin:5px 0"><div class="value">'+fmt(gib(x[1]),'GiB')+'</div><div class="label">'+x[0]+'</div></div>').join('')+'</article>').join('');
-let ps=m?.processes||[];$('ram-processes').innerHTML=table(['PID','Process','RSS','Anon','File','Shared','PSS','Private','Swap'],ps.map(p=>[p.pid,p.name,fmt(gib(p.rss_bytes),'GiB'),fmt(gib(p.rss_anon_bytes),'GiB'),fmt(gib(p.rss_file_bytes),'GiB'),fmt(gib(p.rss_shmem_bytes),'GiB'),fmt(gib(p.pss_bytes),'GiB'),fmt(gib(p.private_bytes),'GiB'),fmt(gib(p.swap_bytes),'GiB')]));
+let ps=m?.processes||[];$('ram-processes').innerHTML=table(['PID','Process','Command line','RSS','Anon','File','Shared','PSS','Private','Swap'],ps.map(p=>[p.pid,p.name,p.cmdline||('['+p.name+']'),fmt(gib(p.rss_bytes),'GiB'),fmt(gib(p.rss_anon_bytes),'GiB'),fmt(gib(p.rss_file_bytes),'GiB'),fmt(gib(p.rss_shmem_bytes),'GiB'),fmt(gib(p.pss_bytes),'GiB'),fmt(gib(p.private_bytes),'GiB'),fmt(gib(p.swap_bytes),'GiB')]),[2]);
 $('ram-note').textContent=m?.processes_semantics||'Process memory details unavailable'}
 function renderGpu(s){let devices=s.gpu_devices||[];$('gpu').innerHTML=devices.map(d=>{let m=d.metrics||[],get=k=>m.find(x=>x.name===k),used=get('gpu.memory.used'),total=get('gpu.memory.total'),items=m.filter(x=>!x.name.startsWith('amd_smi.')).map(x=>[x.name,x.value,x.unit]);return '<article class="card"><h2>AMD GPU · '+d.device_id+'</h2><div class="muted">'+(d.model||d.name||'')+' · '+(d.bdf||'')+' · identity '+d.identity_strength+'</div><div class="metrics">'+items.map(x=>'<div class="metric"><div class="value">'+fmt(x[1],x[2])+'</div><div class="label">'+x[0]+'</div></div>').join('')+'</div>'+(used&&total?'<div class="muted" style="margin-top:10px">VRAM used / total (raw source units)</div><div class="bar"><i style="width:'+Math.max(0,Math.min(100,100*used.value/total.value))+'%"></i></div>':'')+'<details><summary>Raw AMD SMI fields</summary><pre>'+JSON.stringify(d.metrics,null,2)+'</pre></details></article>'}).join('')||'<div class="card muted">GPU telemetry unavailable · '+(s.gpu_provider?.error||'No device records')+'</div>';
 let p=s.gpu_processes||{};$('gpu-processes').innerHTML=table(['GPU index','PID','Process','VRAM','GTT','CPU memory'],(p.processes||[]).map(x=>[x.gpu_index,x.pid,x.name,fmt(gib(x.vram_bytes),'GiB'),fmt(gib(x.gtt_bytes),'GiB'),fmt(gib(x.cpu_memory_bytes),'GiB')]));
 $('gpu-note').textContent=p.semantics||p.error||'Per-process GPU memory telemetry unavailable. Process totals may not sum to device VRAM.'}
-function renderEndpoints(s){$('eps').innerHTML=(s.endpoints||[]).map(e=>{let m=e.metrics||[],pick=k=>m.filter(x=>x.name.toLowerCase().includes(k)).slice(-1)[0]?.value;return '<article class="card"><h2>'+e.endpoint_id+' · <span class="'+(e.state==='connected'?'good':'warn')+'">'+e.state+'</span></h2><div class="muted">'+e.url+'</div><p><b>'+(e.engine||'Unknown engine')+'</b> · PID '+(e.process?.pid??'N/A')+'</p><div class="metrics">'+[['Decode tok/s',pick('decode_tok_s')],['Prompt tok/s',pick('prompt_tokens_seconds')],['Context',pick('max_context')],['Expert cache MiB',pick('expert_cache_mib')]].map(x=>'<div class="metric"><div class="value">'+fmt(x[1])+'</div><div class="label">'+x[0]+'</div></div>').join('')+'</div><p class="muted">Session '+(e.session_id||'—')+'</p><details><summary>Metrics & detection evidence</summary><pre>'+JSON.stringify({metrics:m,detection:e.detection,diagnostics:e.diagnostics,error:e.error},null,2)+'</pre></details></article>'}).join('')||'<div class="card muted">No endpoints enabled</div>'}
-async function tick(){try{let s=await(await fetch('/api/snapshot',{cache:'no-store'})).json();if(s.cycle_id){$('updated').textContent='Updated '+new Date(s.observed_at).toLocaleTimeString();renderSystem(s.system);renderMemory(s.memory);renderGpu(s);renderEndpoints(s);$('plugins').textContent=(s.plugins||[]).map(p=>p.plugin_id+' '+p.state+(p.error?' '+p.error:'')).join(' · ')}let h=await(await fetch('/api/history?limit=10')).json();$('history').innerHTML=table(['Time','Cycle','Endpoints'],(h.items||[]).slice().reverse().map(x=>[new Date(x.observed_at).toLocaleTimeString(),x.cycle_id.slice(0,8),(x.endpoints||[]).map(e=>e.engine||e.state).join(', ')]))}catch(e){$('updated').textContent='API unavailable'}}
+let cfgEps={};
+function renderEndpoints(s){
+ const live={};(s.endpoints||[]).forEach(e=>live[e.endpoint_id]=e);
+ const ids=Object.keys(cfgEps).length?Object.keys(cfgEps):Object.keys(live);
+ $('eps').innerHTML=ids.map(id=>{
+  const def=cfgEps[id]||{};
+  const e=live[id];
+  if(!e||def.enabled===false)return '<article class="card ep" data-endpoint="'+esc(id)+'"><h2>'+esc(id)+' · <span class="warn">paused</span></h2><div class="muted">'+esc(def.url||'')+'</div><p class="muted">Not being tracked right now.</p><div class="row" style="margin-top:12px"><button class="btn" data-act="enable">Resume</button><button class="btn danger" data-act="remove">Remove</button></div></article>';
+  let m=e.metrics||[],pick=k=>m.filter(x=>x.name.toLowerCase().includes(k)).slice(-1)[0]?.value;
+  return '<article class="card ep" data-endpoint="'+esc(id)+'"><h2>'+esc(id)+' · <span class="'+(e.state==='connected'?'good':'warn')+'">'+esc(e.state)+'</span></h2><div class="muted">'+esc(e.url)+'</div><p><b>'+esc(e.engine||'Unknown engine')+'</b> · PID '+(e.process?.pid??'N/A')+'</p><div class="metrics">'+[['Decode tok/s',pick('decode_tok_s')],['Prompt tok/s',pick('prompt_tokens_seconds')],['Context',pick('max_context')],['Expert cache MiB',pick('expert_cache_mib')]].map(x=>'<div class="metric"><div class="value">'+fmt(x[1])+'</div><div class="label">'+x[0]+'</div>').join('')+'</div><p class="muted">Session '+(e.session_id||'—')+'</p><details><summary>Metrics & detection evidence</summary><pre>'+JSON.stringify({metrics:m,detection:e.detection,diagnostics:e.diagnostics,error:e.error},null,2)+'</pre></details><div class="row" style="margin-top:12px"><button class="btn" data-act="disable">Pause</button><button class="btn danger" data-act="remove">Remove</button></div></article>'
+ }).join('')||'<div class="card muted">No endpoints yet — enter a local port above to start tracking one.</div>'}
+$('eps').addEventListener('click',async ev=>{
+ const b=ev.target.closest('button[data-act]');if(!b)return;
+ const id=ev.target.closest('[data-endpoint]')?.dataset.endpoint;if(!id)return;
+ const act=b.dataset.act,msg=$('track-msg');msg.textContent='Working…';msg.className='muted';
+ try{
+  const r=await fetch('/api/endpoints/'+encodeURIComponent(id),act==='remove'?{method:'DELETE'}:{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({enabled:act==='enable'})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)msg.textContent=j.error?.message||'Action failed';
+  msg.className=r.ok?'good':'warn';
+  if(r.ok)await tick()
+ }catch(err){msg.textContent='API unavailable';msg.className='warn'}
+});
+$('track').addEventListener('submit',async ev=>{
+ ev.preventDefault();
+ const port=Number($('port').value),msg=$('track-msg');
+ if(!Number.isInteger(port)||port<1||port>65535){msg.textContent='Enter a port 1–65535';msg.className='warn';return}
+ msg.textContent='Tracking port '+port+'…';msg.className='muted';
+ try{
+  const r=await fetch('/api/endpoints',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({port})});
+  const j=await r.json().catch(()=>({}));
+  if(r.ok){msg.textContent='Now tracking '+j.endpoint.url+' — shown below.';msg.className='good';$('port').value='';await tick()}
+  else{msg.textContent=j.error?.message||'Could not track port '+port;msg.className='warn'}
+ }catch(err){msg.textContent='API unavailable';msg.className='warn'}
+});
+async function tick(){try{
+ let s=await(await fetch('/api/snapshot',{cache:'no-store'})).json();
+ try{const c=await(await fetch('/api/config',{cache:'no-store'})).json();if(c&&Array.isArray(c.endpoints))cfgEps=Object.fromEntries(c.endpoints.map(e=>[e.id,e]))}catch(_){}
+ if(s.cycle_id){
+  $('updated').textContent='Updated '+new Date(s.observed_at).toLocaleTimeString();
+  renderSystem(s.system);renderMemory(s.memory);renderGpu(s);
+  $('plugins').textContent=(s.plugins||[]).map(p=>p.plugin_id+' '+p.state+(p.error?' '+p.error:'')).join(' · ')
+ }else $('updated').textContent='Waiting for first snapshot…';
+ renderEndpoints(s);
+ let h=await(await fetch('/api/history?limit=10')).json();
+ $('history').innerHTML=table(['Time','Cycle','Endpoints'],(h.items||[]).slice().reverse().map(x=>[new Date(x.observed_at).toLocaleTimeString(),x.cycle_id.slice(0,8),(x.endpoints||[]).map(e=>e.engine||e.state).join(', ')]))
+}catch(e){$('updated').textContent='API unavailable'}}
 tick();setInterval(tick,1500)
 </script></body></html>
